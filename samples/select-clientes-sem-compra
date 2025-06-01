@@ -1,0 +1,56 @@
+
+-- select de clientes que ainda nao realizaram compras
+Select c.* 
+from customers c 
+where not exists (
+    select 1
+    from orders o
+    where o.customer_id = c.customer_id
+    );
+
+
+-- select produtos que ainda nao tenham sido comprados
+Select p.* 
+from products p 
+where not exists (
+    select 1 
+    from order_items oi
+    where oi.product_id = p.product_id
+    );
+
+
+-- select listar os produtos sem estoque
+Select p.* 
+from products p, 
+    stocks s 
+where p.product_id = s.product_id 
+    and s.quantity < 1;
+
+
+-- select agrupar quantidade de vendas de uma determinada marca por loja
+Select 
+    --b.brand_name,
+    st.store_id,
+    count(*)
+from orders o,
+    order_items oi,
+    stores st,
+    products pr,
+    brands b
+where b.brand_id = 1 --usando uma marca de exemplo
+    and b.brand_id = pr.brand_id
+    and st.store_id = o.store_id
+    and o.order_id = oi.order_id
+    and pr.product_id = oi.product_id
+group by st.store_id
+
+
+
+-- select listar os funcionarios que nao estejam relacionados a um pedido.
+Select st.* 
+from staffs st, 
+where not exists (
+    select 1 
+    from orders o
+    where o.staff_id = st.staff_id
+);  
